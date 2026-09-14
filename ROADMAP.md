@@ -17,6 +17,42 @@ outcome-level until they become current.
 | 7. Monitoring and alerts | Not started | Forced execution failure and stale-data conditions both notify the operator |
 | 8. Production trial | Not started | Several NFL slates run reliably and a detected gap is successfully backfilled |
 
+## Codex model guidance
+
+These recommendations optimize for the lowest-cost model likely to complete each
+task well. They are based on the [OpenAI model catalog](https://developers.openai.com/api/docs/models),
+which positions GPT-5.6 Luna for cost-sensitive work, GPT-5.6 Terra as the
+intelligence/cost balance, GPT-5.6 Sol for complex professional work, and GPT-6
+Astra for the hardest end-to-end work. Recheck the catalog when a milestone
+becomes current because model availability and pricing can change.
+
+Use the recommended model for implementation and its required verification.
+Increase reasoning one level after a weak or incomplete attempt. Escalate the
+specific difficult subtask to the next model only if increased reasoning is
+still insufficient; do not rerun the entire milestone on a more expensive
+model. Reserve GPT-6 Astra for an unresolved cross-system design, security, or
+debugging problem rather than routine execution.
+
+| Work item | Recommended model | Reasoning | Rationale |
+| --- | --- | --- | --- |
+| M1-T1 — Package and fixture parser | GPT-5.6 Luna | Medium | Small, bounded Python slice with fixture-backed acceptance checks. |
+| M1-T2 — Read-only live client | GPT-5.6 Terra | Medium | External API boundary, authentication hygiene, and error handling need stronger judgment. |
+| M1-T3 — Pagination | GPT-5.6 Terra | High | Completeness, cursor termination, and edge cases are correctness-sensitive. |
+| M1-T4 — Developer commands and quality checks | GPT-5.6 Luna | Medium | Mostly mechanical packaging, documentation, linting, typing, and verification. |
+| Milestone 2 — Development S3 output | GPT-5.6 Terra | High | Immutable naming, checksums, IAM, and idempotency span code and infrastructure. |
+| Milestone 3 — Reliability and metadata | GPT-5.6 Terra | High | Retry classification, quarantine states, and failure-path tests require careful state reasoning. |
+| Milestone 4 — Scheduled Fargate deployment | GPT-5.6 Sol | High | CI, OIDC, IAM, networking, Terraform, and runtime diagnosis form a complex cloud boundary. |
+| Milestone 5 — Snowflake raw ingestion | GPT-5.6 Sol | High | Storage integration, roles, idempotent loading, and lineage cross two managed systems. |
+| Milestone 6 — dbt transformations | GPT-5.6 Terra | High | SQL modeling and data tests are well-scoped but grain and timestamp semantics need scrutiny. |
+| Milestone 7 — Monitoring and alerts | GPT-5.6 Sol | High | End-to-end failure detection crosses CloudWatch, S3, Snowflake, and dbt. |
+| Milestone 8 — Production trial | GPT-5.6 Terra | High | The work is primarily evidence review, gap diagnosis, backfill verification, and documentation. |
+
+When a future milestone becomes current, decompose it first and downgrade
+routine subtasks such as documentation, formatting, fixture creation, and
+straightforward test additions to GPT-5.6 Luna at medium reasoning. Keep the
+milestone-level recommendation for architecture, permissions, data contracts,
+failure semantics, and end-to-end diagnosis.
+
 ## Milestone 1 — Local extraction package
 
 ### Outcome
@@ -164,4 +200,3 @@ detect, explain, and repair a missing-data interval.
 - Prefect or Airflow orchestration
 - Website, external API, projections, and trading functionality
 - Multi-agent automation and autonomous merging
-
