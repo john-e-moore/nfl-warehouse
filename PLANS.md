@@ -64,7 +64,7 @@ and validates it through the same parser used by fixture mode.
 
 - [x] `feat: add read-only Kalshi markets client` — client, CLI live mode, and
       fixture-backed/local-server tests; verify with `python -m unittest discover -s tests -v`.
-- [ ] `docs: hand off live client task` — board and plan evidence; verify with
+- [x] `docs: hand off live client task` — board and plan evidence; verify with
       `git diff --check` and the full local test suite.
 
 ### Decisions
@@ -93,8 +93,8 @@ and validates it through the same parser used by fixture mode.
 ### Handoff
 
 - Status: complete
-- Commit subjects: `feat: add read-only Kalshi markets client`
-- Working tree: handoff control-file changes staged for commit
+- Commit subjects: `feat: add read-only Kalshi markets client`; `docs: hand off live client task`
+- Working tree: clean after the handoff commit
 - Next action: M1-T3 pagination, empty responses, and terminal cursors.
 
 ## Plan template
