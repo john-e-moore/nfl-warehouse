@@ -1,0 +1,12 @@
+flowchart TD
+    EB["EventBridge schedule"] --> ECS["ECS Fargate extractor"]
+    ECS --> API["Kalshi API"]
+    ECS --> S3["Immutable raw JSON in S3"]
+    S3 --> LOAD["Snowpipe or COPY INTO"]
+    LOAD --> RAW["Snowflake raw VARIANT tables"]
+    RAW --> DBT["dbt Core on Fargate"]
+    DBT --> MARTS["Staging and market marts"]
+    ECS --> CW["CloudWatch logs and metrics"]
+    DBT --> CW
+    CW --> SNS["Operator notifications"]
+

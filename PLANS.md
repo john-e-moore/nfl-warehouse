@@ -1,0 +1,108 @@
+# Execution plans
+
+This file is a lightweight working record, not a second roadmap. `ROADMAP.md`
+owns milestone outcomes; `BOARD.md` owns the active task.
+
+## When to write a plan
+
+Write or update the current plan when a task:
+
+- changes several files or boundaries;
+- requires an architectural choice;
+- touches cloud infrastructure, permissions, data contracts, or migrations;
+- is likely to take more than one focused session.
+
+For a small, obvious edit, the acceptance checks in `BOARD.md` are enough.
+
+## Planning rules
+
+- Plan only the active board item in executable detail.
+- Keep steps independently verifiable.
+- Include explicit non-goals.
+- Record decisions and discoveries as they occur.
+- Replace this current plan when the board advances; durable decisions belong in
+  `docs/decisions/`.
+- A checked box means evidence exists, not merely that code was written.
+
+## Current execution plan — M1-T1
+
+### Outcome
+
+A deterministic local command parses a committed Kalshi markets fixture into
+typed records without network access.
+
+### Non-goals
+
+- Live API calls or authentication
+- Pagination
+- Persistence outside the local process
+- AWS, Snowflake, dbt, containers, or CI deployment
+- A generalized framework for hypothetical providers
+
+### Steps
+
+- [ ] Inspect the repository and select the smallest coherent Python packaging
+      setup consistent with existing files.
+- [ ] Add one sanitized Kalshi markets response fixture representative of the
+      response envelope and required fields in the ingestion spec.
+- [ ] Define the minimum typed model needed to represent those fields while
+      preserving a path to the raw response.
+- [ ] Add a local command that loads the fixture, validates it, and prints a
+      concise deterministic summary.
+- [ ] Test the valid fixture and one malformed response.
+- [ ] Run documented install and test commands from a clean environment.
+- [ ] Review the diff for secrets, generated data, and premature scope.
+- [ ] Update `BOARD.md` with evidence and the next smallest task.
+
+### Decisions
+
+- Pending: package manager and command interface, based on the existing repository.
+
+### Discoveries
+
+- None yet.
+
+### Verification evidence
+
+- Not yet available.
+
+### Handoff
+
+- Status: not started
+- Next action: execute the first unchecked step
+
+## Plan template
+
+```md
+## Current execution plan — <task ID>
+
+### Outcome
+
+<One observable capability>
+
+### Non-goals
+
+- <Explicitly deferred work>
+
+### Steps
+
+- [ ] <Small verifiable step>
+
+### Decisions
+
+- <Decision and rationale>
+
+### Discoveries
+
+- <Unexpected fact affecting the plan>
+
+### Verification evidence
+
+- <Command, test result, object, query, or screenshot>
+
+### Handoff
+
+- Status: <not started | in progress | blocked | complete>
+- Next action: <smallest concrete action>
+```
+

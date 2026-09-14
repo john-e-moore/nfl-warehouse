@@ -1,0 +1,167 @@
+# Data platform roadmap
+
+This roadmap covers the first production-capable Kalshi pipeline. Only the
+current milestone should be decomposed into daily tasks. Later milestones remain
+outcome-level until they become current.
+
+## Status
+
+| Milestone | State | Demonstration |
+| --- | --- | --- |
+| 1. Local extraction package | Current | Fixture and live Kalshi market extraction work through one CLI boundary |
+| 2. Development S3 output | Not started | A run writes immutable raw JSON and a manifest that can be read back |
+| 3. Reliability and metadata | Not started | Simulated pagination, rate limits, retries, and malformed responses behave correctly |
+| 4. Scheduled Fargate deployment | Not started | Manual and scheduled tasks run the same immutable container successfully |
+| 5. Snowflake raw ingestion | Not started | New objects load idempotently and remain traceable to S3 and the extraction run |
+| 6. dbt transformations | Not started | `dbt build` creates tested staging models and a minimal market snapshot mart |
+| 7. Monitoring and alerts | Not started | Forced execution failure and stale-data conditions both notify the operator |
+| 8. Production trial | Not started | Several NFL slates run reliably and a detected gap is successfully backfilled |
+
+## Milestone 1 — Local extraction package
+
+### Outcome
+
+A developer can run a provider-neutral Python command locally to retrieve and
+validate Kalshi NFL market data, with deterministic fixture-backed tests and an
+optional live integration path.
+
+### Definition of done
+
+- [ ] The package installs from a clean checkout using documented commands.
+- [ ] A CLI command parses the committed Kalshi markets fixture without network
+      access.
+- [ ] The same application boundary can call the live Kalshi API when explicitly
+      requested and credentials/configuration are present.
+- [ ] Pagination retrieves all pages and terminates correctly.
+- [ ] Parsed records retain the fields required by the ingestion spec.
+- [ ] Tests cover success, empty results, malformed data, and pagination.
+- [ ] Formatting, linting, typing, and tests pass using documented commands.
+- [ ] No AWS, S3, Snowflake, dbt, scheduler, or production infrastructure is
+      required.
+
+### Demonstration
+
+From a clean checkout, run the fixture-backed command and tests. If live access
+is configured, run one read-only live retrieval and report the record/page count
+without printing secrets.
+
+## Milestone 2 — Development S3 output
+
+### Outcome
+
+An extraction writes the exact source response and a run manifest to a dedicated
+development S3 bucket using an immutable, partitioned key convention.
+
+### Definition of done
+
+- [ ] Development bucket and least-privilege writer role exist through Terraform.
+- [ ] Raw payloads are stored as compressed JSON without normalization.
+- [ ] Each run writes a manifest containing run metadata and object checksums.
+- [ ] Object keys contain provider, entity, observation date/hour, and run ID.
+- [ ] A saved payload and manifest can be retrieved and verified.
+- [ ] Local fixture mode remains usable without AWS.
+
+## Milestone 3 — Reliability and metadata
+
+### Outcome
+
+The collector fails visibly, retries safely, and distinguishes complete,
+partial, empty, quarantined, and failed runs.
+
+### Definition of done
+
+- [ ] Bounded exponential backoff with jitter handles retryable failures.
+- [ ] Rate limiting, timeouts, and server failures have explicit error categories.
+- [ ] Pagination completeness is validated.
+- [ ] Structurally invalid responses are preserved and quarantined.
+- [ ] Structured run summaries include counts, bytes, duration, status, and code version.
+- [ ] Automated tests simulate all important failure paths.
+
+## Milestone 4 — Scheduled Fargate deployment
+
+### Outcome
+
+The same container used locally runs as an ECS Fargate task manually and on an
+EventBridge schedule.
+
+### Definition of done
+
+- [ ] Terraform provisions ECR, ECS task definitions, IAM, logs, and schedules.
+- [ ] CI builds an immutable image and authenticates to AWS with OIDC.
+- [ ] A manual task produces expected development S3 objects.
+- [ ] An EventBridge-triggered task produces expected objects.
+- [ ] Task image digest, Git SHA, and run ID are traceable.
+- [ ] No NAT Gateway is required by the initial architecture.
+
+## Milestone 5 — Snowflake raw ingestion
+
+### Outcome
+
+New S3 objects load into Snowflake raw tables without duplicate ingestion and
+retain complete lineage back to S3.
+
+### Definition of done
+
+- [ ] Development Snowflake database, schemas, roles, warehouse, stage, and
+      storage integration are defined reproducibly.
+- [ ] Raw JSON loads into a `VARIANT` payload with file and run metadata.
+- [ ] Reprocessing an already loaded object creates no duplicate rows.
+- [ ] Rejected files and load latency are inspectable.
+- [ ] One raw row can be traced to its S3 object and extraction manifest.
+
+## Milestone 6 — dbt transformations
+
+### Outcome
+
+dbt converts raw Kalshi responses into tested staging relations and a minimal
+append-only market snapshot mart.
+
+### Definition of done
+
+- [ ] dbt sources declare freshness using ingestion and observation timestamps.
+- [ ] Staging models normalize required market fields without discarding raw data.
+- [ ] Snapshot grain and uniqueness are explicit and tested.
+- [ ] Core not-null, unique, relationship, and accepted-value tests pass.
+- [ ] `dbt build` succeeds from documented local and containerized commands.
+
+## Milestone 7 — Monitoring and alerts
+
+### Outcome
+
+Failures, missing successful runs, ingestion lag, and stale modeled data become
+visible without manually inspecting several systems.
+
+### Definition of done
+
+- [ ] CloudWatch exposes task failures, duration, and successful-run heartbeat.
+- [ ] Absence of a successful extraction beyond the threshold triggers an alert.
+- [ ] Load failures or excessive ingestion lag trigger an alert.
+- [ ] dbt source freshness failures trigger an alert.
+- [ ] A concise operator view links a run across logs, S3, Snowflake, and dbt.
+- [ ] Forced failure and stale-data drills deliver notifications successfully.
+
+## Milestone 8 — Production trial
+
+### Outcome
+
+The pipeline operates through several real NFL slates, and the operator can
+detect, explain, and repair a missing-data interval.
+
+### Definition of done
+
+- [ ] Production and development identities, data, schedules, and secrets are separated.
+- [ ] Several NFL slates complete with documented success and freshness evidence.
+- [ ] At least one backfill is run safely without creating duplicates.
+- [ ] A recovery drill is documented in an operator runbook.
+- [ ] Known gaps, costs, and the decision about polling frequency are recorded.
+- [ ] The milestone demonstration is reviewed before adding another provider.
+
+## Explicitly later
+
+- FanDuel and DraftKings collection
+- WebSocket or sub-hourly market capture
+- S3 Parquet/silver layer
+- Prefect or Airflow orchestration
+- Website, external API, projections, and trading functionality
+- Multi-agent automation and autonomous merging
+
