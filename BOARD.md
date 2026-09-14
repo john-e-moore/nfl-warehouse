@@ -5,23 +5,7 @@ are not decomposed unless they become part of the current milestone.
 
 ## Today
 
-### M1-T1 — Bootstrap the package and parse one fixture
-
-**Finish line:** A deterministic local command parses a committed Kalshi markets
-fixture into typed records without network access.
-
-**Acceptance checks:**
-
-- [ ] The Python package installs from a clean checkout.
-- [ ] The fixture-backed command returns typed market records and a concise count.
-- [ ] Tests cover a valid response and a malformed response.
-
-**Not today:**
-
-- Live authentication or pagination
-- S3, Docker, AWS, Snowflake, or dbt
-- Every Kalshi entity
-- Generalization for unimplemented providers
+None — M1-T1 is complete; the next task remains queued below.
 
 ## Next
 
@@ -36,6 +20,10 @@ None.
 ## Done
 
 - Project roadmap, architecture, specification, decision record, and working conventions created.
+- M1-T1 — Bootstrap the package and parse one fixture. A fresh Python 3.12
+  environment installed the package, the offline CLI parsed the committed
+  fixture into one typed market record, and the valid/malformed parser tests
+  passed.
 
 ## Parking lot
 
@@ -45,11 +33,15 @@ None.
 
 ## End-of-session handoff
 
-**Result:** Not started
+**Result:** M1-T1 complete
 
-**Evidence:** None yet
+**Evidence:** `python3.12 -m venv <temporary-dir>`, `pip install --no-deps -e .`,
+`python -m unittest discover -s tests -v` (2 tests passed), and the installed
+`kalshi-markets --fixture fixtures/kalshi_markets.json` command returned
+`parsed 1 typed market records`. `git diff --check` passed.
 
-**Next smallest step:** Ask the agent to complete only `M1-T1` and verify each acceptance check.
+**Next smallest step:** M1-T2 — add the explicitly selected, read-only live
+Kalshi client behind the existing parser boundary. Do not begin it as part of
+this handoff.
 
 **Unexpected discoveries:** None yet
-

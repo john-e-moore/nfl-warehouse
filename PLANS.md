@@ -41,35 +41,48 @@ typed records without network access.
 
 ### Steps
 
-- [ ] Inspect the repository and select the smallest coherent Python packaging
+- [x] Inspect the repository and select the smallest coherent Python packaging
       setup consistent with existing files.
-- [ ] Add one sanitized Kalshi markets response fixture representative of the
+- [x] Add one sanitized Kalshi markets response fixture representative of the
       response envelope and required fields in the ingestion spec.
-- [ ] Define the minimum typed model needed to represent those fields while
+- [x] Define the minimum typed model needed to represent those fields while
       preserving a path to the raw response.
-- [ ] Add a local command that loads the fixture, validates it, and prints a
+- [x] Add a local command that loads the fixture, validates it, and prints a
       concise deterministic summary.
-- [ ] Test the valid fixture and one malformed response.
-- [ ] Run documented install and test commands from a clean environment.
-- [ ] Review the diff for secrets, generated data, and premature scope.
-- [ ] Update `BOARD.md` with evidence and the next smallest task.
+- [x] Test the valid fixture and one malformed response.
+- [x] Run documented install and test commands from a clean environment.
+- [x] Review the diff for secrets, generated data, and premature scope.
+- [x] Update `BOARD.md` with evidence and the next smallest task.
 
 ### Decisions
 
-- Pending: package manager and command interface, based on the existing repository.
+- Use a standard `pyproject.toml` with a `src/` layout and setuptools, with no
+  runtime dependencies.
+- Expose the fixture command as `kalshi-markets --fixture PATH`; use
+  `python -m unittest discover` for dependency-free local verification.
+- Represent validated markets with a frozen dataclass and retain the complete
+  source market mapping in `raw` so unknown fields are not discarded.
 
 ### Discoveries
 
-- None yet.
+- The repository was an otherwise clean project-control scaffold: no package,
+  fixture, tests, or dependency lockfile existed.
 
 ### Verification evidence
 
-- Not yet available.
+- `/usr/bin/python3.12 -m venv <temporary-dir>` created a clean environment.
+- `pip install --no-deps -e .` succeeded.
+- `python -m unittest discover -s tests -v` passed both tests: valid fixture
+  parsing/raw-field preservation and malformed-response rejection.
+- Installed `kalshi-markets --fixture fixtures/kalshi_markets.json` printed
+  `parsed 1 typed market records` without network access.
+- `git diff --check` passed; no secrets, generated raw data, or later-milestone
+  infrastructure were added.
 
 ### Handoff
 
-- Status: not started
-- Next action: execute the first unchecked step
+- Status: complete
+- Next action: M1-T2 is the next smallest board item; it was not started.
 
 ## Plan template
 
@@ -105,4 +118,3 @@ typed records without network access.
 - Status: <not started | in progress | blocked | complete>
 - Next action: <smallest concrete action>
 ```
-
