@@ -18,6 +18,9 @@ For a small, obvious edit, the acceptance checks in `BOARD.md` are enough.
 
 - Plan only the active board item in executable detail.
 - Keep steps independently verifiable.
+- Name the task branch and, when used, the worktree path before editing.
+- Group steps into small commit slices. Each slice should leave the branch in a
+  working state and state the check that must pass before committing.
 - Include explicit non-goals.
 - Record decisions and discoveries as they occur.
 - Replace this current plan when the board advances; durable decisions belong in
@@ -101,6 +104,16 @@ typed records without network access.
 
 - [ ] <Small verifiable step>
 
+### Git workspace
+
+- Branch: `milestone-<n>/<short-task-name>`
+- Worktree: <path, or "not used">
+
+### Commit plan
+
+- [ ] `<type>: <cohesive slice>` — includes <files/behavior>; verify with
+      `<smallest relevant command>`
+
 ### Decisions
 
 - <Decision and rationale>
@@ -116,5 +129,7 @@ typed records without network access.
 ### Handoff
 
 - Status: <not started | in progress | blocked | complete>
+- Commit subjects: <subject for each completed slice>
+- Working tree: <clean, or list and explain intentional uncommitted changes>
 - Next action: <smallest concrete action>
 ```
