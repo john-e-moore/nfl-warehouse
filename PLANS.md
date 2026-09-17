@@ -31,7 +31,66 @@ For a small, obvious edit, the acceptance checks in `BOARD.md` are enough.
   `docs/decisions/`.
 - A checked box means evidence exists, not merely that code was written.
 
-## Current execution plan — Task workflow controls
+## Current execution plan — M2-T1
+
+### Outcome
+
+A versioned, implementation-ready contract specifies immutable, partitioned raw
+response objects and successful-run manifests for the development S3 boundary.
+
+### Non-goals
+
+- Constructing payloads, compressing data, computing checksums in code, or
+  changing the fixture CLI
+- Terraform, AWS credentials, S3 writes, read-back behavior, or live tests
+- Retry policy, run statuses, error categories, quarantine, and richer failure
+  metadata reserved for Milestone 3
+
+### Steps
+
+- [ ] Decompose Milestone 2 on the board, make M2-T1 the sole Today item, and
+  record this task plan.
+- [ ] Define the durable raw-output contract: key grammar, byte/checksum
+  boundaries, immutable-write semantics, manifest schema, and Milestone 3
+  deferrals.
+- [ ] Run the relevant documentation and repository checks; record evidence and
+  leave a precise task handoff without advancing to M2-T2.
+
+### Git workspace
+
+- Branch: `milestone-2/raw-output-contract`
+- Worktree: `/home/john/nfl-warehouse`
+
+### Commit plan
+
+- [ ] `docs: plan raw output contract` — ordered M2 board tasks and M2-T1 plan;
+  verify with focused review and `git diff --check`.
+- [ ] `docs: define immutable raw output contract` — versioned contract and
+  aligned architecture/specification references; verify with a focused contract
+  review and `git diff --check`.
+- [ ] `docs: hand off raw output contract` — completed task evidence in the
+  board and plan; verify with the full local quality suite.
+
+### Decisions
+
+- Pending contract review.
+
+### Discoveries
+
+- The M2 roadmap tasks existed only at roadmap level; the board needed its
+  required current-milestone decomposition before implementation could begin.
+
+### Verification evidence
+
+- Pending.
+
+### Handoff
+
+- Status: in progress
+- Working tree: pending first commit
+- Next action: define the M2 raw output contract only.
+
+## Previous execution plan — Task workflow controls
 
 ### Outcome
 

@@ -9,12 +9,27 @@ board items and follow the lightweight `main` workflow defined in `AGENTS.md`.
 
 ## Today
 
-None — M1-T4 is complete; Milestone 1 is ready for review.
+- M2-T1 — Define the raw output contract for immutable Kalshi response
+  artifacts and run manifests.
+  - Acceptance: a versioned, reviewable contract defines the partitioned
+    payload/manifest key grammar, exact-response byte boundary, immutability,
+    checksums, required manifest fields, and the reliability metadata deferred
+    to Milestone 3.
 
 ## Next
 
-- M2-T1 — Define the development S3 output boundary and immutable object
-  convention.
+- M2-T2 — Build raw payload and manifest artifacts.
+  - Acceptance: offline, fixture-backed artifact construction deterministically
+    produces lossless compressed payloads, collision-safe keys, and verifiable
+    manifests without AWS configuration.
+- M2-T3 — Provision development S3 infrastructure.
+  - Acceptance: Terraform defines a protected development bucket and
+    least-privilege writer identity, with reviewed local configuration and safe
+    operating instructions.
+- M2-T4 — Persist to S3 and verify read-back.
+  - Acceptance: an explicitly selected S3 path writes immutable payloads then
+    a manifest, rejects collisions, is fake-tested, and has one authorized
+    development read-back demonstration.
 
 ## Blocked
 
@@ -46,16 +61,13 @@ None.
 
 ## End-of-session handoff
 
-**Result:** M1-T4 complete; Milestone 1 complete
+**Result:** Milestone 2 decomposed; M2-T1 is active
 
-**Evidence:** In a detached clean checkout and fresh Python 3.12 virtual
-environment, `pip install -e '.[dev]'` succeeded. Ruff formatting/linting,
-mypy, and `python -m unittest discover -s tests -v` all passed; the suite ran
-12 tests. The installed fixture command returned `parsed 1 typed market
-records`. No credentials or live access are needed for the default suite.
-`git diff --check` passed.
+**Evidence:** M2-T1 through M2-T4 now have ordered scope and acceptance checks.
+Only M2-T1 is in Today; its dedicated branch is
+`milestone-2/raw-output-contract`.
 
-**Next smallest step:** M2-T1 — define the development S3 output boundary and
-immutable object convention. Do not begin it as part of this handoff.
+**Next smallest step:** Define and review the M2 raw artifact contract. Do not
+begin M2-T2 artifact construction or any AWS work.
 
 **Unexpected discoveries:** None yet
