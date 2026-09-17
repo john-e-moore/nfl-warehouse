@@ -42,12 +42,12 @@ typing, and test commands for the local extraction package.
 
 ### Steps
 
-- [ ] Inspect the current package and choose minimal pinned developer tooling.
-- [ ] Add package metadata, developer commands, and source/test quality
+- [x] Inspect the current package and choose minimal pinned developer tooling.
+- [x] Add package metadata, developer commands, and source/test quality
       configuration; verify each command in the current checkout.
-- [ ] Add clean-checkout instructions and a small demonstration script or
+- [x] Add clean-checkout instructions and a small demonstration script or
       command sequence; verify from a fresh virtual environment.
-- [ ] Run the complete local checks, update board and handoff evidence, and
+- [x] Run the complete local checks, update board and handoff evidence, and
       commit the final project-control slice.
 
 ### Git workspace
@@ -57,11 +57,11 @@ typing, and test commands for the local extraction package.
 
 ### Commit plan
 
-- [ ] `build: add pinned developer quality tooling` — package extras and
+- [x] `build: add pinned developer quality tooling` — package extras and
       formatter/linter/type-check configuration; verify the quality commands.
-- [ ] `docs: document clean-checkout verification` — developer workflow and
+- [x] `docs: document clean-checkout verification` — developer workflow and
       clean-install demonstration; verify in a fresh Python 3.12 environment.
-- [ ] `docs: hand off developer quality task` — board/plan completion evidence;
+- [x] `docs: hand off developer quality task` — board/plan completion evidence;
       verify the full suite and clean working tree.
 
 ### Decisions
@@ -78,14 +78,23 @@ typing, and test commands for the local extraction package.
 
 ### Verification evidence
 
-- Pending implementation.
+- `29f2d79` quality slice: pinned Ruff/mypy developer extra, project
+  configuration, and formatting/import cleanup; Ruff, mypy, unittest, and
+  `git diff --check` passed.
+- `229d907` documentation slice: clean-checkout workflow and fixture/live CLI
+  commands; current-checkout quality checks and tests passed.
+- Detached clean-checkout demonstration from `229d907`: Python 3.12 editable
+  install, Ruff format/check, mypy, 12 unittest cases, and fixture CLI all
+  passed.
 
 ### Handoff
 
-- Status: in progress
-- Commit subjects: pending
-- Working tree: changes for M1-T4 are expected
-- Next action: add and verify the quality-tooling slice.
+- Status: complete
+- Commit subjects: `build: add pinned developer quality tooling`,
+  `docs: document clean-checkout verification`, and the handoff commit below
+- Working tree: clean after the handoff commit
+- Next action: M2-T1 development S3 output boundary; do not begin it in this
+  task.
 
 ## Previous execution plan — M1-T3
 
