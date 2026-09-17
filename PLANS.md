@@ -49,8 +49,8 @@ validates each envelope, and stops only at a valid terminal cursor.
       existing public client boundary.
 - [x] Add local-server tests for cursor propagation, terminal cursors, empty
       results, and invalid cursor envelopes.
-- [ ] Run the full local suite and record completion evidence.
-- [ ] Update the board and plan handoff for M1-T4.
+- [x] Run the full local suite and record completion evidence.
+- [x] Update the board and plan handoff for M1-T4.
 
 ### Git workspace
 
@@ -65,7 +65,7 @@ validates each envelope, and stops only at a valid terminal cursor.
 - [x] `feat: paginate Kalshi markets retrieval` — multi-page client retrieval
       and local-server coverage; verify with
       `PYTHONPATH=src /usr/bin/python3.12 -m unittest discover -s tests -p 'test_client.py' -v`.
-- [ ] `docs: hand off pagination task` — board/plan completion evidence; verify
+- [x] `docs: hand off pagination task` — board/plan completion evidence; verify
       with `git diff --check` and the full local test suite.
 
 ### Decisions
@@ -84,14 +84,24 @@ validates each envelope, and stops only at a valid terminal cursor.
 
 ### Verification evidence
 
-- Pending implementation.
+- In a fresh Python 3.12 virtual environment, `pip install --no-deps -e .`
+  succeeded; `python -m unittest discover -s tests -v` passed all 12 tests.
+- The installed `kalshi-markets --fixture fixtures/kalshi_markets.json` command
+  printed `parsed 1 typed market records` without network access.
+- Local-server tests prove two-page aggregation, correct cursor propagation,
+  empty terminal results, malformed-cursor rejection, and repeated-cursor
+  failure. `git diff --check` passed.
 
 ### Handoff
 
-- Status: in progress
-- Commit subjects: pending
-- Working tree: expected to be clean after each commit
-- Next action: implement validated cursor-envelope parsing and aggregation.
+- Status: complete
+- Commit subjects:
+  - `feat: validate Kalshi markets pagination cursors`
+  - `feat: paginate Kalshi markets retrieval`
+  - `docs: hand off pagination task`
+- Working tree: clean after the handoff commit
+- Next action: M1-T4 developer commands, typing, linting, and clean-checkout
+  demonstration. Do not begin it as part of this handoff.
 
 ## Plan template
 

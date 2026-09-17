@@ -5,11 +5,10 @@ are not decomposed unless they become part of the current milestone.
 
 ## Today
 
-None — M1-T2 is complete; the next task remains queued below.
+None — M1-T3 is complete; the next task remains queued below.
 
 ## Next
 
-- M1-T3 — Implement and test pagination, including empty and terminal cursors.
 - M1-T4 — Finish Milestone 1 developer commands, typing, linting, and clean-checkout demonstration.
 
 ## Blocked
@@ -26,6 +25,9 @@ None.
 - M1-T2 — Add the read-only live Kalshi client behind the same application
   boundary. The explicit `--live` CLI mode retrieved and validated a single
   public Kalshi markets page without reading or emitting credentials.
+- M1-T3 — Implement and test pagination, including empty and terminal cursors.
+  The live client aggregates every validated page, passes each cursor once,
+  terminates at an empty cursor, and rejects malformed or repeated cursors.
 
 ## Parking lot
 
@@ -35,18 +37,18 @@ None.
 
 ## End-of-session handoff
 
-**Result:** M1-T2 complete
+**Result:** M1-T3 complete
 
 **Evidence:** In a fresh Python 3.12 virtual environment, `pip install --no-deps
--e .` succeeded and `python -m unittest discover -s tests -v` passed all 6
+-e .` succeeded and `python -m unittest discover -s tests -v` passed all 12
 tests. The installed fixture command returned `parsed 1 typed market records`.
-The explicitly selected, public read-only command
-`kalshi-markets --live --series-ticker KXNFLGAME --limit 1` also returned
-`parsed 1 typed market records`. Tests use a local HTTP server for request
-shape, parser-boundary validation, and response-body redaction; no credentials
-or live access are needed for the default suite. `git diff --check` passed.
+Local-server tests prove the client aggregates two pages in order, sends the
+returned cursor exactly once, succeeds for an empty terminal page, and rejects
+invalid or repeated cursors. No credentials or live access are needed for the
+default suite. `git diff --check` passed.
 
-**Next smallest step:** M1-T3 — implement and test cursor pagination, including
-empty results and terminal cursors. Do not begin it as part of this handoff.
+**Next smallest step:** M1-T4 — finish the Milestone 1 developer commands,
+typing, linting, and clean-checkout demonstration. Do not begin it as part of
+this handoff.
 
 **Unexpected discoveries:** None yet
