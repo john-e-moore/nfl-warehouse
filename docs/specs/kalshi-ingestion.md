@@ -55,6 +55,11 @@ time and trace every normalized record to its original response.
 4. Invalid or unexpected responses must be preserved in a quarantine path when
    safe to do so.
 
+The successful-run object layout, byte boundary, checksums, and manifest shape
+for Milestone 2 are defined by the versioned
+[raw output contract](../contracts/raw-output-v1.md). Failure and quarantine
+semantics remain a Milestone 3 concern.
+
 ### Traceability
 
 Every persisted run must eventually retain:
@@ -125,4 +130,3 @@ preserved.
 - How frequently do source schemas or market taxonomies change?
 - Is hourly capture sufficient for the intended first analytical use case?
 - What file size and load cadence minimize Snowflake cost without sacrificing freshness?
-
