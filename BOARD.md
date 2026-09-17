@@ -2,6 +2,8 @@
 
 Keep exactly one primary item in **Today**. New ideas go to **Parking lot** and
 are not decomposed unless they become part of the current milestone.
+Before beginning a newly current milestone, decompose only that milestone into
+small, ordered tasks with acceptance checks, then move one task into **Today**.
 
 ## Today
 

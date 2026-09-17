@@ -27,7 +27,61 @@ For a small, obvious edit, the acceptance checks in `BOARD.md` are enough.
   `docs/decisions/`.
 - A checked box means evidence exists, not merely that code was written.
 
-## Current execution plan — M1-T4
+## Current execution plan — Task workflow controls
+
+### Outcome
+
+Agents must decompose a newly current milestone before implementation and push
+a verified completed-task branch as a draft pull request for human review.
+
+### Non-goals
+
+- Decomposing or implementing Milestone 2
+- Changing roadmap outcomes, infrastructure, or product behavior
+
+### Steps
+
+- [x] Align AGENTS.md, BOARD.md, and the task prompt template with the requested
+      workflow; verify their instructions are consistent.
+- [x] Commit the project-control update and verify the final working tree.
+
+### Git workspace
+
+- Branch: `chore/task-workflow-controls`
+- Worktree: `/home/john/nfl-warehouse`
+
+### Commit plan
+
+- [x] `docs: clarify milestone task and PR workflow` — project-control
+      instructions; verify with a focused content review and `git diff --check`.
+
+### Decisions
+
+- A completed, verified task is pushed and opened as a draft PR; merging remains
+  an explicit human-authorized action.
+- The board and task template repeat the roadmap's milestone-decomposition gate
+  so an agent cannot infer task-level work before it exists.
+
+### Discoveries
+
+- The task template already required a push and draft PR, but AGENTS.md
+  contradicted it.
+
+### Verification evidence
+
+- `git diff --check` passed.
+- A focused search confirmed that AGENTS.md authorizes the push/draft-PR
+  handoff, while BOARD.md and the task template both require new-milestone
+  decomposition before implementation.
+
+### Handoff
+
+- Status: complete
+- Commit subjects: `docs: clarify milestone task and PR workflow`
+- Working tree: clean after the handoff commit
+- Next action: decompose Milestone 2 into board tasks before implementation.
+
+## Previous execution plan — M1-T4
 
 ### Outcome
 
