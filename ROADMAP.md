@@ -39,7 +39,10 @@ debugging problem rather than routine execution.
 | M1-T2 — Read-only live client | GPT-5.6 Terra | Medium | External API boundary, authentication hygiene, and error handling need stronger judgment. |
 | M1-T3 — Pagination | GPT-5.6 Terra | High | Completeness, cursor termination, and edge cases are correctness-sensitive. |
 | M1-T4 — Developer commands and quality checks | GPT-5.6 Luna | Medium | Mostly mechanical packaging, documentation, linting, typing, and verification. |
-| Milestone 2 — Development S3 output | GPT-5.6 Terra | High | Immutable naming, checksums, IAM, and idempotency span code and infrastructure. |
+| M2-T1 — Raw output contract | GPT-5.6 Terra | High | The object-key grammar, immutable-write semantics, and manifest contract determine every later persistence step. |
+| M2-T2 — Raw artifact construction | GPT-5.6 Terra | High | Byte-preserving compression, checksums, and manifest assembly need careful deterministic tests. |
+| M2-T3 — Development S3 infrastructure | GPT-5.6 Terra | High | Terraform state boundaries, bucket protections, and least-privilege IAM require cloud and security judgment. |
+| M2-T4 — S3 persistence and read-back demonstration | GPT-5.6 Terra | High | Safe immutable writes and end-to-end checksum verification cross the application and AWS boundaries. |
 | Milestone 3 — Reliability and metadata | GPT-5.6 Terra | High | Retry classification, quarantine states, and failure-path tests require careful state reasoning. |
 | Milestone 4 — Scheduled Fargate deployment | GPT-5.6 Sol | High | CI, OIDC, IAM, networking, Terraform, and runtime diagnosis form a complex cloud boundary. |
 | Milestone 5 — Snowflake raw ingestion | GPT-5.6 Sol | High | Storage integration, roles, idempotent loading, and lineage cross two managed systems. |
@@ -96,6 +99,70 @@ development S3 bucket using an immutable, partitioned key convention.
 - [ ] Object keys contain provider, entity, observation date/hour, and run ID.
 - [ ] A saved payload and manifest can be retrieved and verified.
 - [ ] Local fixture mode remains usable without AWS.
+
+### Tasks
+
+#### M2-T1 — Define the raw output contract
+
+Specify the persistence boundary before adding AWS behavior so object layout,
+immutability, and traceability have one testable contract.
+
+- [ ] Document the partitioned key grammar for raw payloads and manifests,
+      including provider, entity, UTC observation date/hour, and run ID.
+- [ ] Define immutable-write behavior and the response-body byte boundary used
+      for compression and checksums.
+- [ ] Define the Milestone 2 manifest schema with run metadata, raw object keys,
+      byte and record counts, and checksums required by the ingestion spec.
+- [ ] Record explicitly which richer statuses and failure metadata remain for
+      Milestone 3.
+
+#### M2-T2 — Build raw payload and manifest artifacts
+
+Construct persistence-ready artifacts independently of AWS, retaining fixture
+mode as the default offline path.
+
+- [ ] Capture each exact source response body before normalization and encode it
+      as compressed JSON without changing its contents.
+- [ ] Generate keys and manifests through the M2-T1 contract with deterministic
+      behavior for a supplied run ID and observation timestamp.
+- [ ] Compute and test checksums against the bytes that will be persisted.
+- [ ] Add fixture-backed tests for payload round trips, manifest contents,
+      partition fields, and collision-safe object naming.
+- [ ] Confirm the existing local fixture command and offline test suite require
+      no AWS configuration or network access.
+
+#### M2-T3 — Provision development S3 infrastructure
+
+Create only the development storage and identity resources needed to exercise
+the persistence boundary.
+
+- [ ] Define the development bucket and writer role through Terraform with
+      encryption, public-access blocking, and appropriate ownership settings.
+- [ ] Grant the writer only the object and bucket permissions required by the
+      documented key layout and read-back demonstration.
+- [ ] Configure protections that prevent routine overwrites or deletion of raw
+      observations.
+- [ ] Document initialization, plan, apply, and safe teardown commands without
+      committing credentials, state, or environment-specific data.
+- [ ] Validate formatting and configuration locally, and review the plan before
+      applying it to the development account.
+
+#### M2-T4 — Persist to S3 and verify read-back
+
+Connect the artifact boundary to S3 and demonstrate a complete development
+write without changing the offline default workflow.
+
+- [ ] Add an explicitly selected S3 output path that writes payload objects
+      before their manifest and refuses to replace an existing key.
+- [ ] Keep AWS credentials outside application arguments, logs, manifests, and
+      committed configuration.
+- [ ] Test S3 behavior with a local fake or stub, including write ordering,
+      collision handling, and failed-write behavior.
+- [ ] Run one authorized development integration that retrieves the stored
+      payload and manifest, decompresses the payload, and verifies every
+      recorded checksum and object reference.
+- [ ] Record the demonstration evidence and confirm the local fixture workflow
+      still passes without AWS.
 
 ## Milestone 3 — Reliability and metadata
 

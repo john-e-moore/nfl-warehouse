@@ -1,5 +1,8 @@
-Read AGENTS.md and the project-control files it references. Work only on the next milestone task
-from BOARD.md.
+Use this prompt for roadmap milestone/task work. Small one-off requests outside
+the roadmap follow the lightweight `main` workflow in AGENTS.md instead.
+
+Read AGENTS.md and the project-control files it references. Work only on the
+next milestone task from BOARD.md.
 
 If no task is active because a new milestone has become current, first
 decompose only that milestone into small, ordered tasks with acceptance checks
