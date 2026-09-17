@@ -134,8 +134,9 @@ obsolete requirement, explain and update the requirement and test together.
   refactors, formatting, or project-control updates.
 - Before starting, record the intended branch name and commit slices in
   `PLANS.md`; revise them when discoveries change the sequence.
-- Do not push, merge, create a pull request, or alter remote infrastructure unless
-  explicitly asked.
+- When a task is complete and its handoff commit is verified, push its dedicated
+  branch to the remote and create a draft pull request for human review. Do not
+  merge or alter other remote infrastructure unless explicitly asked.
 - Suggested branch format: `milestone-<n>/<short-task-name>`.
 
 ## Documentation
