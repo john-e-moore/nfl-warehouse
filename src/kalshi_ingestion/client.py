@@ -11,7 +11,6 @@ from urllib.request import Request, urlopen
 
 from .markets import MarketRecord, MarketResponseError, parse_markets_page
 
-
 DEFAULT_API_BASE_URL: Final = "https://external-api.kalshi.com/trade-api/v2"
 
 
