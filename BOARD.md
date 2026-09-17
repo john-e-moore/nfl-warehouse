@@ -9,12 +9,7 @@ board items and follow the lightweight `main` workflow defined in `AGENTS.md`.
 
 ## Today
 
-- M2-T1 — Define the raw output contract for immutable Kalshi response
-  artifacts and run manifests.
-  - Acceptance: a versioned, reviewable contract defines the partitioned
-    payload/manifest key grammar, exact-response byte boundary, immutability,
-    checksums, required manifest fields, and the reliability metadata deferred
-    to Milestone 3.
+None — M2-T1 is complete; M2-T2 is ready for a separately reviewed task.
 
 ## Next
 
@@ -52,6 +47,10 @@ None.
   demonstration. A detached clean checkout installed the pinned `dev` extra
   under Python 3.12, passed Ruff formatting/linting, mypy, all 12 offline tests,
   and the fixture CLI demonstration.
+- M2-T1 — Define the raw output contract for immutable Kalshi response
+  artifacts and run manifests. The versioned contract defines the partitioned
+  key grammar, source-byte and persisted-byte checksum boundaries, create-only
+  publication semantics, successful-run manifest schema, and M3 deferrals.
 
 ## Parking lot
 
@@ -61,13 +60,16 @@ None.
 
 ## End-of-session handoff
 
-**Result:** Milestone 2 decomposed; M2-T1 is active
+**Result:** M2-T1 complete; Milestone 2 remains in progress
 
-**Evidence:** M2-T1 through M2-T4 now have ordered scope and acceptance checks.
-Only M2-T1 is in Today; its dedicated branch is
-`milestone-2/raw-output-contract`.
+**Evidence:** The versioned contract is at
+`docs/contracts/raw-output-v1.md`, with ADR 0002 and aligned architecture and
+specification references. The documented offline suite passed: Ruff
+format/check, mypy, all 12 unittest cases, and the fixture CLI (`parsed 1 typed
+market records`); `git diff --check` also passed. No AWS configuration,
+credentials, network access, or persistence code was introduced.
 
-**Next smallest step:** Define and review the M2 raw artifact contract. Do not
-begin M2-T2 artifact construction or any AWS work.
+**Next smallest step:** M2-T2 — build raw payload and manifest artifacts. Do
+not begin it as part of this handoff.
 
 **Unexpected discoveries:** None yet
