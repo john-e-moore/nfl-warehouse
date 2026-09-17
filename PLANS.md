@@ -45,9 +45,9 @@ validates each envelope, and stops only at a valid terminal cursor.
 
 - [x] Inspect the existing client/parser boundary and the M1 pagination
       requirements.
-- [x] Add cursor-envelope validation before multi-page retrieval through the
+- [x] Add cursor-envelope validation and multi-page retrieval through the
       existing public client boundary.
-- [ ] Add local-server tests for cursor propagation, terminal cursors, empty
+- [x] Add local-server tests for cursor propagation, terminal cursors, empty
       results, and invalid cursor envelopes.
 - [ ] Run the full local suite and record completion evidence.
 - [ ] Update the board and plan handoff for M1-T4.
@@ -62,9 +62,9 @@ validates each envelope, and stops only at a valid terminal cursor.
 - [x] `feat: validate Kalshi markets pagination cursors` — page-envelope
       validation and parser tests; verify with
       `PYTHONPATH=src /usr/bin/python3.12 -m unittest discover -s tests -p 'test_markets.py' -v`.
-- [ ] `feat: paginate Kalshi markets retrieval` — multi-page client retrieval
+- [x] `feat: paginate Kalshi markets retrieval` — multi-page client retrieval
       and local-server coverage; verify with
-      `python -m unittest discover -s tests -v`.
+      `PYTHONPATH=src /usr/bin/python3.12 -m unittest discover -s tests -p 'test_client.py' -v`.
 - [ ] `docs: hand off pagination task` — board/plan completion evidence; verify
       with `git diff --check` and the full local test suite.
 

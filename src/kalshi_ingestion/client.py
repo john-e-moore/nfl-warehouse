@@ -9,7 +9,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlparse
 from urllib.request import Request, urlopen
 
-from .markets import MarketRecord, MarketResponseError, parse_markets_response
+from .markets import MarketRecord, MarketResponseError, parse_markets_page
 
 
 DEFAULT_API_BASE_URL: Final = "https://external-api.kalshi.com/trade-api/v2"
@@ -20,10 +20,10 @@ class KalshiClientError(RuntimeError):
 
 
 class KalshiMarketsClient:
-    """Retrieve one validated markets page from Kalshi's public API.
+    """Retrieve all validated markets pages from Kalshi's public API.
 
     The endpoint is public, so this client deliberately does not read, sign with,
-    or transmit API credentials. Pagination belongs to M1-T3.
+    or transmit API credentials.
     """
 
     def __init__(self, base_url: str = DEFAULT_API_BASE_URL, timeout_seconds: float = 20.0):
@@ -42,30 +42,47 @@ class KalshiMarketsClient:
         return cls(base_url=os.environ.get("KALSHI_API_BASE_URL", DEFAULT_API_BASE_URL))
 
     def fetch_markets(self, *, series_ticker: str, limit: int = 100) -> list[MarketRecord]:
-        """Fetch and validate a single Kalshi markets page for one series."""
+        """Fetch and validate every markets page for one series."""
 
         if not series_ticker:
             raise ValueError("series_ticker must not be empty")
         if not 1 <= limit <= 1000:
             raise ValueError("limit must be between 1 and 1000")
 
-        query = urlencode({"series_ticker": series_ticker, "limit": limit})
-        request = Request(
-            f"{self._base_url}/markets?{query}",
-            headers={"Accept": "application/json"},
-            method="GET",
-        )
-        try:
-            with urlopen(request, timeout=self._timeout_seconds) as response:
-                payload = json.load(response)
-        except HTTPError as exc:
-            raise KalshiClientError(f"Kalshi markets request returned HTTP {exc.code}") from exc
-        except (URLError, OSError) as exc:
-            raise KalshiClientError("Kalshi markets request failed") from exc
-        except json.JSONDecodeError as exc:
-            raise KalshiClientError("Kalshi markets response was not valid JSON") from exc
+        records: list[MarketRecord] = []
+        cursor: str | None = None
+        seen_cursors: set[str] = set()
+        while True:
+            query_parameters: dict[str, str | int] = {
+                "series_ticker": series_ticker,
+                "limit": limit,
+            }
+            if cursor is not None:
+                query_parameters["cursor"] = cursor
+            request = Request(
+                f"{self._base_url}/markets?{urlencode(query_parameters)}",
+                headers={"Accept": "application/json"},
+                method="GET",
+            )
+            try:
+                with urlopen(request, timeout=self._timeout_seconds) as response:
+                    payload = json.load(response)
+            except HTTPError as exc:
+                raise KalshiClientError(f"Kalshi markets request returned HTTP {exc.code}") from exc
+            except (URLError, OSError) as exc:
+                raise KalshiClientError("Kalshi markets request failed") from exc
+            except json.JSONDecodeError as exc:
+                raise KalshiClientError("Kalshi markets response was not valid JSON") from exc
 
-        try:
-            return parse_markets_response(payload)
-        except MarketResponseError as exc:
-            raise KalshiClientError("Kalshi markets response failed validation") from exc
+            try:
+                page_records, next_cursor = parse_markets_page(payload)
+            except MarketResponseError as exc:
+                raise KalshiClientError("Kalshi markets response failed validation") from exc
+            records.extend(page_records)
+
+            if not next_cursor:
+                return records
+            if next_cursor in seen_cursors:
+                raise KalshiClientError("Kalshi markets pagination cursor repeated")
+            seen_cursors.add(next_cursor)
+            cursor = next_cursor
