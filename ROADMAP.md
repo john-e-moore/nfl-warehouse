@@ -8,8 +8,8 @@ outcome-level until they become current.
 
 | Milestone | State | Demonstration |
 | --- | --- | --- |
-| 1. Local extraction package | Current | Fixture and live Kalshi market extraction work through one CLI boundary |
-| 2. Development S3 output | Not started | A run writes immutable raw JSON and a manifest that can be read back |
+| 1. Local extraction package | Complete | Fixture and live Kalshi market extraction work through one CLI boundary |
+| 2. Development S3 output | Current | A run writes immutable raw JSON and a manifest that can be read back |
 | 3. Reliability and metadata | Not started | Simulated pagination, rate limits, retries, and malformed responses behave correctly |
 | 4. Scheduled Fargate deployment | Not started | Manual and scheduled tasks run the same immutable container successfully |
 | 5. Snowflake raw ingestion | Not started | New objects load idempotently and remain traceable to S3 and the extraction run |

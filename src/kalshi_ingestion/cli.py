@@ -14,7 +14,9 @@ def main() -> int:
     source.add_argument("--fixture", type=Path, help="JSON fixture path")
     source.add_argument("--live", action="store_true", help="use the public read-only API")
     parser.add_argument("--series-ticker", help="Kalshi series ticker (required with --live)")
-    parser.add_argument("--limit", type=int, default=100, help="live page size (1-1000; default: 100)")
+    parser.add_argument(
+        "--limit", type=int, default=100, help="live page size (1-1000; default: 100)"
+    )
     args = parser.parse_args()
 
     try:

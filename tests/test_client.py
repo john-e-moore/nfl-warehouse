@@ -1,15 +1,14 @@
 import json
+import unittest
+from collections.abc import Iterator
 from contextlib import contextmanager
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
-from typing import Iterator
-import unittest
 from unittest.mock import patch
 from urllib.parse import parse_qs, urlparse
 
 from kalshi_ingestion.client import KalshiClientError, KalshiMarketsClient
-
 
 FIXTURE = Path(__file__).parents[1] / "fixtures" / "kalshi_markets.json"
 
@@ -60,9 +59,7 @@ class KalshiMarketsClientTests(unittest.TestCase):
 
         request = urlparse(request_paths[0])
         self.assertEqual(request.path, "/markets")
-        self.assertEqual(
-            parse_qs(request.query), {"series_ticker": ["KXNFLGAME"], "limit": ["25"]}
-        )
+        self.assertEqual(parse_qs(request.query), {"series_ticker": ["KXNFLGAME"], "limit": ["25"]})
 
     def test_http_error_does_not_expose_response_body(self) -> None:
         with local_server([(401, '{"detail":"private response text"}')]) as (base_url, _):
@@ -78,9 +75,10 @@ class KalshiMarketsClientTests(unittest.TestCase):
         second_market = {**first_page["markets"][0], "ticker": "KXNFLGAME-26SEP20-NEPIT-NE"}
         second_page = {"markets": [second_market], "cursor": ""}
 
-        with local_server(
-            [(200, json.dumps(first_page)), (200, json.dumps(second_page))]
-        ) as (base_url, request_paths):
+        with local_server([(200, json.dumps(first_page)), (200, json.dumps(second_page))]) as (
+            base_url,
+            request_paths,
+        ):
             records = KalshiMarketsClient(base_url).fetch_markets(
                 series_ticker="KXNFLGAME", limit=25
             )
@@ -118,7 +116,9 @@ class KalshiMarketsClientTests(unittest.TestCase):
                 KalshiMarketsClient(base_url).fetch_markets(series_ticker="KXNFLGAME")
 
     def test_environment_base_url_is_optional_and_non_secret(self) -> None:
-        with patch.dict("os.environ", {"KALSHI_API_BASE_URL": "http://example.test/v2"}, clear=True):
+        with patch.dict(
+            "os.environ", {"KALSHI_API_BASE_URL": "http://example.test/v2"}, clear=True
+        ):
             client = KalshiMarketsClient.from_environment()
 
         self.assertEqual(client._base_url, "http://example.test/v2")

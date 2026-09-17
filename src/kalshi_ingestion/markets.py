@@ -1,7 +1,8 @@
 """Validation and typed representation for a Kalshi markets response."""
 
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, Mapping
+from typing import Any
 
 
 class MarketResponseError(ValueError):

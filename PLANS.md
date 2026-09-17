@@ -27,7 +27,76 @@ For a small, obvious edit, the acceptance checks in `BOARD.md` are enough.
   `docs/decisions/`.
 - A checked box means evidence exists, not merely that code was written.
 
-## Current execution plan — M1-T3
+## Current execution plan — M1-T4
+
+### Outcome
+
+A clean checkout can install the package and run documented formatting, linting,
+typing, and test commands for the local extraction package.
+
+### Non-goals
+
+- AWS, S3, Snowflake, dbt, containers, CI deployment, or scheduling
+- New extraction behavior beyond what is needed for quality checks
+- Live credentials or network access in the default verification suite
+
+### Steps
+
+- [x] Inspect the current package and choose minimal pinned developer tooling.
+- [x] Add package metadata, developer commands, and source/test quality
+      configuration; verify each command in the current checkout.
+- [x] Add clean-checkout instructions and a small demonstration script or
+      command sequence; verify from a fresh virtual environment.
+- [x] Run the complete local checks, update board and handoff evidence, and
+      commit the final project-control slice.
+
+### Git workspace
+
+- Branch: `milestone-1/developer-quality`
+- Worktree: `/home/john/nfl-warehouse`
+
+### Commit plan
+
+- [x] `build: add pinned developer quality tooling` — package extras and
+      formatter/linter/type-check configuration; verify the quality commands.
+- [x] `docs: document clean-checkout verification` — developer workflow and
+      clean-install demonstration; verify in a fresh Python 3.12 environment.
+- [x] `docs: hand off developer quality task` — board/plan completion evidence;
+      verify the full suite and clean working tree.
+
+### Decisions
+
+- Use Ruff for formatting and linting and mypy for static typing, exposed as a
+  pinned `dev` extra so a clean checkout has one documented installation path.
+- Keep unittest as the test runner because the repository already uses the
+  standard library and the default suite must remain offline.
+
+### Discoveries
+
+- The repository has no README or developer-tool configuration yet; the package
+  and tests already use Python 3.12-compatible annotations.
+
+### Verification evidence
+
+- `29f2d79` quality slice: pinned Ruff/mypy developer extra, project
+  configuration, and formatting/import cleanup; Ruff, mypy, unittest, and
+  `git diff --check` passed.
+- `229d907` documentation slice: clean-checkout workflow and fixture/live CLI
+  commands; current-checkout quality checks and tests passed.
+- Detached clean-checkout demonstration from `229d907`: Python 3.12 editable
+  install, Ruff format/check, mypy, 12 unittest cases, and fixture CLI all
+  passed.
+
+### Handoff
+
+- Status: complete
+- Commit subjects: `build: add pinned developer quality tooling`,
+  `docs: document clean-checkout verification`, and the handoff commit below
+- Working tree: clean after the handoff commit
+- Next action: M2-T1 development S3 output boundary; do not begin it in this
+  task.
+
+## Previous execution plan — M1-T3
 
 ### Outcome
 

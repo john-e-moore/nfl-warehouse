@@ -1,13 +1,12 @@
 import json
-from pathlib import Path
 import unittest
+from pathlib import Path
 
 from kalshi_ingestion.markets import (
     MarketResponseError,
     parse_markets_page,
     parse_markets_response,
 )
-
 
 FIXTURE = Path(__file__).parents[1] / "fixtures" / "kalshi_markets.json"
 
