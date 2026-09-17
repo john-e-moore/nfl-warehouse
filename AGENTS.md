@@ -34,15 +34,29 @@ If these conflict, stop and explain the conflict before changing code.
 
 ## Working protocol
 
+Two work modes apply:
+
+- Roadmap milestones and tasks use the full task workflow below: a dedicated
+  branch, board and plan handoff, local commits, a remote push, and a draft pull
+  request.
+- A small, one-off change that the user explicitly requests outside the roadmap
+  is made directly on `main`, committed locally, and is not pushed or opened as
+  a pull request. It does not require `BOARD.md` or `PLANS.md` updates unless the
+  requested change affects those files. If whether a request qualifies is
+  unclear, use the roadmap/task workflow.
+
 Before editing:
 
-1. Read `BOARD.md`, the relevant milestone in `ROADMAP.md`, and the applicable
-   spec or decision record.
+1. For roadmap work, read `BOARD.md`, the relevant milestone in `ROADMAP.md`,
+   and the applicable spec or decision record. For a small one-off request,
+   inspect only the project context needed to make and verify that change.
 2. Inspect the repository and existing changes. Preserve unrelated user work.
-3. Run `git status --short --branch` and verify the work is on a dedicated task
-   branch, not `main`. If still on `main`, create or switch to a branch/worktree
-   named for the active task before changing files. If existing changes make
-   that unsafe, stop and ask the user how to preserve them.
+3. Run `git status --short --branch`. For roadmap work, verify the work is on a
+   dedicated task branch, not `main`; if necessary, create or switch to a
+   branch/worktree named for the active task. For a small one-off request,
+   verify the work is on `main`. Honor an explicit user instruction to use a
+   different existing branch. If existing changes make the required switch
+   unsafe, stop and ask the user how to preserve them.
 4. State the active outcome, acceptance checks, and anything intentionally not
    included.
 5. For a non-trivial task, create or update the current execution plan using
@@ -78,9 +92,10 @@ Before declaring completion:
 2. Confirm every acceptance check with concrete evidence.
 3. Review the diff for secrets, generated files, accidental scope expansion, and
    unrelated changes.
-4. Update `BOARD.md` and `PLANS.md` to leave a precise handoff, including the
-   task branch/worktree and completed commit subjects. Move an item to
-   Done only when its checks actually pass.
+4. For roadmap work, update `BOARD.md` and `PLANS.md` to leave a precise
+   handoff, including the task branch/worktree and completed commit subjects.
+   Move an item to Done only when its checks actually pass. Do not add workflow
+   bookkeeping for a small one-off request unless the user asks for it.
 5. Do not mark a roadmap milestone complete unless its milestone demonstration
    succeeds end to end.
 6. Report any intentionally uncommitted changes. A completed task should
@@ -123,20 +138,24 @@ obsolete requirement, explain and update the requirement and test together.
 
 ## Git workflow
 
-- Use one dedicated branch per narrowly scoped issue; use a separate worktree
-  as well when concurrent or isolated work would benefit from it.
-- Never edit or commit task work on `main` unless the user explicitly requests
-  that exception. Merely starting the session on `main` is not permission.
+- Use one dedicated branch per roadmap task; use a separate worktree as well
+  when concurrent or isolated work would benefit from it.
+- Make explicitly requested small one-off changes outside the roadmap directly
+  on `main`. Commit them locally, but do not push them or create a pull request.
+- Never edit or commit roadmap task work on `main` unless the user explicitly
+  requests that exception. Merely starting the session on `main` is not
+  permission.
 - Local commits are part of implementation work unless the user explicitly asks
   for uncommitted changes. Commit after each coherent, passing slice rather than
   once at task or milestone completion.
 - Keep commits cohesive and reviewable. Avoid mixing unrelated behavior,
   refactors, formatting, or project-control updates.
-- Before starting, record the intended branch name and commit slices in
-  `PLANS.md`; revise them when discoveries change the sequence.
-- When a task is complete and its handoff commit is verified, push its dedicated
-  branch to the remote and create a draft pull request for human review. Do not
-  merge or alter other remote infrastructure unless explicitly asked.
+- Before starting roadmap work, record the intended branch name and commit
+  slices in `PLANS.md`; revise them when discoveries change the sequence.
+- When a roadmap task is complete and its handoff commit is verified, push its
+  dedicated branch to the remote and create a draft pull request for human
+  review. Do not push one-off commits, and do not merge or alter other remote
+  infrastructure unless explicitly asked.
 - Suggested branch format: `milestone-<n>/<short-task-name>`.
 
 ## Documentation

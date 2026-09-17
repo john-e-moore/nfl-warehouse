@@ -3,6 +3,10 @@
 This file is a lightweight working record, not a second roadmap. `ROADMAP.md`
 owns milestone outcomes; `BOARD.md` owns the active task.
 
+Explicitly requested small one-off changes outside the roadmap do not need an
+execution-plan entry. They follow the lightweight `main` workflow in
+`AGENTS.md`.
+
 ## When to write a plan
 
 Write or update the current plan when a task:
@@ -33,6 +37,8 @@ For a small, obvious edit, the acceptance checks in `BOARD.md` are enough.
 
 Agents must decompose a newly current milestone before implementation and push
 a verified completed-task branch as a draft pull request for human review.
+Explicitly requested small one-off changes outside the roadmap instead use a
+local-only `main` workflow.
 
 ### Non-goals
 
@@ -59,6 +65,9 @@ a verified completed-task branch as a draft pull request for human review.
 
 - A completed, verified task is pushed and opened as a draft PR; merging remains
   an explicit human-authorized action.
+- An explicitly requested small one-off change outside the roadmap is committed
+  locally on `main`, with no push, pull request, board update, or plan update.
+  Ambiguous work defaults to the roadmap/task workflow.
 - The board and task template repeat the roadmap's milestone-decomposition gate
   so an agent cannot infer task-level work before it exists.
 
