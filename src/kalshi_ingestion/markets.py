@@ -54,13 +54,23 @@ def _optional_integer(market: Mapping[str, Any], name: str) -> int | None:
 
 
 def parse_markets_response(payload: object) -> list[MarketRecord]:
-    """Validate a Kalshi markets envelope and return typed market records."""
+    """Validate one Kalshi markets envelope and return its typed records."""
+
+    records, _ = parse_markets_page(payload)
+    return records
+
+
+def parse_markets_page(payload: object) -> tuple[list[MarketRecord], str]:
+    """Validate a markets page and return its records with the next cursor."""
 
     if not isinstance(payload, dict):
         raise MarketResponseError("response must be a JSON object")
     markets = payload.get("markets")
     if not isinstance(markets, list):
         raise MarketResponseError("response field 'markets' must be a list")
+    cursor = payload.get("cursor")
+    if not isinstance(cursor, str):
+        raise MarketResponseError("response field 'cursor' must be a string")
 
     records: list[MarketRecord] = []
     for index, candidate in enumerate(markets):
@@ -96,4 +106,4 @@ def parse_markets_response(payload: object) -> list[MarketRecord]:
                 raw=candidate,
             )
         )
-    return records
+    return records, cursor

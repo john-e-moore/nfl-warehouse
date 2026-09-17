@@ -27,75 +27,81 @@ For a small, obvious edit, the acceptance checks in `BOARD.md` are enough.
   `docs/decisions/`.
 - A checked box means evidence exists, not merely that code was written.
 
-## Current execution plan — M1-T2
+## Current execution plan — M1-T3
 
 ### Outcome
 
-An explicitly selected CLI mode retrieves a read-only Kalshi markets response
-and validates it through the same parser used by fixture mode.
+The read-only Kalshi client retrieves every markets page for a requested series,
+validates each envelope, and stops only at a valid terminal cursor.
 
 ### Non-goals
 
-- Pagination or multi-page aggregation
-- Retry/backoff policy and structured logging
+- Retry/backoff policy, structured logging, or partial-run metadata
 - Persistence outside the local process
 - AWS, Snowflake, dbt, containers, or CI deployment
 - A generalized framework for hypothetical providers
 
 ### Steps
 
-- [x] Inspect the existing parser/CLI, live-configuration placeholders, and
-      the M1 source-boundary requirements.
-- [x] Add a read-only HTTP client that reads only non-secret configuration from
-      the environment and passes successful JSON through `parse_markets_response`.
-- [x] Extend the CLI with explicit, mutually exclusive fixture and live modes.
-- [x] Add local-server tests for request shape, successful validation, and safe
-      failure handling without requiring live credentials or network access.
-- [x] Run the full local suite and one optional live command, then record
-      completion evidence.
-- [x] Update the board and plan handoff for M1-T3.
+- [x] Inspect the existing client/parser boundary and the M1 pagination
+      requirements.
+- [x] Add cursor-envelope validation and multi-page retrieval through the
+      existing public client boundary.
+- [x] Add local-server tests for cursor propagation, terminal cursors, empty
+      results, and invalid cursor envelopes.
+- [x] Run the full local suite and record completion evidence.
+- [x] Update the board and plan handoff for M1-T4.
 
 ### Git workspace
 
-- Branch: `milestone-1/live-kalshi-client`
+- Branch: `milestone-1/paginate-markets`
 - Worktree: `/home/john/nfl-warehouse`
 
 ### Commit plan
 
-- [x] `feat: add read-only Kalshi markets client` — client, CLI live mode, and
-      fixture-backed/local-server tests; verify with `python -m unittest discover -s tests -v`.
-- [x] `docs: hand off live client task` — board and plan evidence; verify with
-      `git diff --check` and the full local test suite.
+- [x] `feat: validate Kalshi markets pagination cursors` — page-envelope
+      validation and parser tests; verify with
+      `PYTHONPATH=src /usr/bin/python3.12 -m unittest discover -s tests -p 'test_markets.py' -v`.
+- [x] `feat: paginate Kalshi markets retrieval` — multi-page client retrieval
+      and local-server coverage; verify with
+      `PYTHONPATH=src /usr/bin/python3.12 -m unittest discover -s tests -p 'test_client.py' -v`.
+- [x] `docs: hand off pagination task` — board/plan completion evidence; verify
+      with `git diff --check` and the full local test suite.
 
 ### Decisions
 
-- Keep the live transport in a dedicated standard-library module so the parser
-  remains deterministic and independently testable.
-- Require an explicit `--live` selector; fixture mode remains network-free and
-  usable without credentials.
+- Preserve the existing `fetch_markets` list-returning application boundary;
+  make it aggregate validated page records rather than exposing transport
+  envelopes to the CLI.
+- Treat only an empty cursor string as terminal. Missing or wrongly typed cursor
+  fields are validation failures, so an incomplete retrieval can never look
+  successful.
 
 ### Discoveries
 
-- `.env.example` reserves `KALSHI_API_BASE_URL`, `KALSHI_API_KEY_ID`, and
-  `KALSHI_PRIVATE_KEY_PATH`, but no runtime configuration or HTTP client exists.
+- The committed fixture already represents a terminal cursor as an empty
+  string, matching the required terminal-cursor test coverage.
 
 ### Verification evidence
 
 - In a fresh Python 3.12 virtual environment, `pip install --no-deps -e .`
-  succeeded; `python -m unittest discover -s tests -v` passed 6 tests.
+  succeeded; `python -m unittest discover -s tests -v` passed all 12 tests.
 - The installed `kalshi-markets --fixture fixtures/kalshi_markets.json` command
   printed `parsed 1 typed market records` without network access.
-- The installed public read-only command `kalshi-markets --live --series-ticker
-  KXNFLGAME --limit 1` printed `parsed 1 typed market records`.
-- `git diff --check` passed before the implementation commit and before this
-  handoff commit.
+- Local-server tests prove two-page aggregation, correct cursor propagation,
+  empty terminal results, malformed-cursor rejection, and repeated-cursor
+  failure. `git diff --check` passed.
 
 ### Handoff
 
 - Status: complete
-- Commit subjects: `feat: add read-only Kalshi markets client`; `docs: hand off live client task`
+- Commit subjects:
+  - `feat: validate Kalshi markets pagination cursors`
+  - `feat: paginate Kalshi markets retrieval`
+  - `docs: hand off pagination task`
 - Working tree: clean after the handoff commit
-- Next action: M1-T3 pagination, empty responses, and terminal cursors.
+- Next action: M1-T4 developer commands, typing, linting, and clean-checkout
+  demonstration. Do not begin it as part of this handoff.
 
 ## Plan template
 
