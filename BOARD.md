@@ -9,12 +9,22 @@ board items and follow the lightweight `main` workflow defined in `AGENTS.md`.
 
 ## Today
 
-None — M1-T4 is complete; Milestone 1 is ready for review.
+None — M2-T1 is complete; M2-T2 is ready for a separately reviewed task.
 
 ## Next
 
-- M2-T1 — Define the development S3 output boundary and immutable object
-  convention.
+- M2-T2 — Build raw payload and manifest artifacts.
+  - Acceptance: offline, fixture-backed artifact construction deterministically
+    produces lossless compressed payloads, collision-safe keys, and verifiable
+    manifests without AWS configuration.
+- M2-T3 — Provision development S3 infrastructure.
+  - Acceptance: Terraform defines a protected development bucket and
+    least-privilege writer identity, with reviewed local configuration and safe
+    operating instructions.
+- M2-T4 — Persist to S3 and verify read-back.
+  - Acceptance: an explicitly selected S3 path writes immutable payloads then
+    a manifest, rejects collisions, is fake-tested, and has one authorized
+    development read-back demonstration.
 
 ## Blocked
 
@@ -37,6 +47,10 @@ None.
   demonstration. A detached clean checkout installed the pinned `dev` extra
   under Python 3.12, passed Ruff formatting/linting, mypy, all 12 offline tests,
   and the fixture CLI demonstration.
+- M2-T1 — Define the raw output contract for immutable Kalshi response
+  artifacts and run manifests. The versioned contract defines the partitioned
+  key grammar, source-byte and persisted-byte checksum boundaries, create-only
+  publication semantics, successful-run manifest schema, and M3 deferrals.
 
 ## Parking lot
 
@@ -46,16 +60,16 @@ None.
 
 ## End-of-session handoff
 
-**Result:** M1-T4 complete; Milestone 1 complete
+**Result:** M2-T1 complete; Milestone 2 remains in progress
 
-**Evidence:** In a detached clean checkout and fresh Python 3.12 virtual
-environment, `pip install -e '.[dev]'` succeeded. Ruff formatting/linting,
-mypy, and `python -m unittest discover -s tests -v` all passed; the suite ran
-12 tests. The installed fixture command returned `parsed 1 typed market
-records`. No credentials or live access are needed for the default suite.
-`git diff --check` passed.
+**Evidence:** The versioned contract is at
+`docs/contracts/raw-output-v1.md`, with ADR 0002 and aligned architecture and
+specification references. The documented offline suite passed: Ruff
+format/check, mypy, all 12 unittest cases, and the fixture CLI (`parsed 1 typed
+market records`); `git diff --check` also passed. No AWS configuration,
+credentials, network access, or persistence code was introduced.
 
-**Next smallest step:** M2-T1 — define the development S3 output boundary and
-immutable object convention. Do not begin it as part of this handoff.
+**Next smallest step:** M2-T2 — build raw payload and manifest artifacts. Do
+not begin it as part of this handoff.
 
 **Unexpected discoveries:** None yet

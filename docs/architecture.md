@@ -42,11 +42,12 @@ operational boundary and proves it before proceeding.
 - Accompanied by a run manifest and checksums
 - Retained as the replay and audit source of truth
 
-Proposed object pattern:
+The accepted v1 object pattern is defined in the
+[raw output contract](contracts/raw-output-v1.md):
 
 ```text
 s3://<raw-bucket>/
-  source=kalshi/
+  provider=kalshi/
     entity=markets/
       observed_date=YYYY-MM-DD/
         observed_hour=HH/
@@ -93,4 +94,3 @@ Every extraction run should eventually expose:
 
 The key operational signal is a successful-run heartbeat. A schedule invocation
 alone does not prove that data reached S3 or Snowflake.
-
