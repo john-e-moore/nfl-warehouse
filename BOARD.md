@@ -9,14 +9,10 @@ board items and follow the lightweight `main` workflow defined in `AGENTS.md`.
 
 ## Today
 
-None — M2-T1 is complete; M2-T2 is ready for a separately reviewed task.
+None — M2-T2 is complete; M2-T3 is ready for a separately reviewed task.
 
 ## Next
 
-- M2-T2 — Build raw payload and manifest artifacts.
-  - Acceptance: offline, fixture-backed artifact construction deterministically
-    produces lossless compressed payloads, collision-safe keys, and verifiable
-    manifests without AWS configuration.
 - M2-T3 — Provision development S3 infrastructure.
   - Acceptance: Terraform defines a protected development bucket and
     least-privilege writer identity, with reviewed local configuration and safe
@@ -51,6 +47,10 @@ None.
   artifacts and run manifests. The versioned contract defines the partitioned
   key grammar, source-byte and persisted-byte checksum boundaries, create-only
   publication semantics, successful-run manifest schema, and M3 deferrals.
+- M2-T2 — Build raw payload and manifest artifacts. The client captures exact
+  response bytes before decoding, and offline construction deterministically
+  produces lossless gzip payloads, contract keys, checksums, and verifiable
+  manifests from supplied run metadata without AWS configuration.
 
 ## Parking lot
 
@@ -60,16 +60,16 @@ None.
 
 ## End-of-session handoff
 
-**Result:** M2-T1 complete; Milestone 2 remains in progress
+**Result:** M2-T2 complete; Milestone 2 remains in progress
 
-**Evidence:** The versioned contract is at
-`docs/contracts/raw-output-v1.md`, with ADR 0002 and aligned architecture and
-specification references. The documented offline suite passed: Ruff
-format/check, mypy, all 12 unittest cases, and the fixture CLI (`parsed 1 typed
-market records`); `git diff --check` also passed. No AWS configuration,
-credentials, network access, or persistence code was introduced.
+**Evidence:** `CapturedMarketsPage` retains each response's exact bytes before
+JSON decoding and validation. The offline artifact builder uses zero-timestamp,
+no-filename gzip output and emits the contract's keys, checksums, totals, and
+manifest. Ruff format/check, mypy, all 18 offline unit tests, the fixture CLI
+(`parsed 1 typed market records`), and `git diff --check` passed. No AWS
+configuration, credentials, network access, or persistence code was introduced.
 
-**Next smallest step:** M2-T2 — build raw payload and manifest artifacts. Do
-not begin it as part of this handoff.
+**Next smallest step:** M2-T3 — provision only the development S3 infrastructure.
+Do not begin it as part of this handoff.
 
 **Unexpected discoveries:** None yet
