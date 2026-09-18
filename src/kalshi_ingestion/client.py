@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+from dataclasses import dataclass
 from typing import Final
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlparse
@@ -16,6 +17,16 @@ DEFAULT_API_BASE_URL: Final = "https://external-api.kalshi.com/trade-api/v2"
 
 class KalshiClientError(RuntimeError):
     """Raised when a read-only Kalshi request cannot produce market records."""
+
+
+@dataclass(frozen=True, slots=True)
+class CapturedMarketsPage:
+    """One validated markets page with its unmodified source response bytes."""
+
+    response_bytes: bytes
+    request_cursor: str | None
+    next_cursor: str
+    records: tuple[MarketRecord, ...]
 
 
 class KalshiMarketsClient:
@@ -43,12 +54,23 @@ class KalshiMarketsClient:
     def fetch_markets(self, *, series_ticker: str, limit: int = 100) -> list[MarketRecord]:
         """Fetch and validate every markets page for one series."""
 
+        return [
+            record
+            for page in self.fetch_market_pages(series_ticker=series_ticker, limit=limit)
+            for record in page.records
+        ]
+
+    def fetch_market_pages(
+        self, *, series_ticker: str, limit: int = 100
+    ) -> list[CapturedMarketsPage]:
+        """Fetch validated pages while retaining bytes before decoding or parsing."""
+
         if not series_ticker:
             raise ValueError("series_ticker must not be empty")
         if not 1 <= limit <= 1000:
             raise ValueError("limit must be between 1 and 1000")
 
-        records: list[MarketRecord] = []
+        pages: list[CapturedMarketsPage] = []
         cursor: str | None = None
         seen_cursors: set[str] = set()
         while True:
@@ -65,7 +87,8 @@ class KalshiMarketsClient:
             )
             try:
                 with urlopen(request, timeout=self._timeout_seconds) as response:
-                    payload = json.load(response)
+                    response_bytes = response.read()
+                payload = json.loads(response_bytes)
             except HTTPError as exc:
                 raise KalshiClientError(f"Kalshi markets request returned HTTP {exc.code}") from exc
             except (URLError, OSError) as exc:
@@ -77,10 +100,17 @@ class KalshiMarketsClient:
                 page_records, next_cursor = parse_markets_page(payload)
             except MarketResponseError as exc:
                 raise KalshiClientError("Kalshi markets response failed validation") from exc
-            records.extend(page_records)
+            pages.append(
+                CapturedMarketsPage(
+                    response_bytes=response_bytes,
+                    request_cursor=cursor,
+                    next_cursor=next_cursor,
+                    records=tuple(page_records),
+                )
+            )
 
             if not next_cursor:
-                return records
+                return pages
             if next_cursor in seen_cursors:
                 raise KalshiClientError("Kalshi markets pagination cursor repeated")
             seen_cursors.add(next_cursor)

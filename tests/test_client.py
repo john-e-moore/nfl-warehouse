@@ -52,6 +52,18 @@ class KalshiMarketsClientTests(unittest.TestCase):
 
         self.assertEqual(records[0].ticker, "KXNFLGAME-26SEP13-BUFNYJ-BUF")
 
+    def test_captures_exact_response_bytes_before_validation(self) -> None:
+        body = b'{ "markets" : [], "cursor" : "" }\n'
+
+        with local_server([(200, body.decode())]) as (base_url, _):
+            pages = KalshiMarketsClient(base_url).fetch_market_pages(series_ticker="KXNFLGAME")
+
+        self.assertEqual(len(pages), 1)
+        self.assertEqual(pages[0].response_bytes, body)
+        self.assertIsNone(pages[0].request_cursor)
+        self.assertEqual(pages[0].next_cursor, "")
+        self.assertEqual(pages[0].records, ())
+
     def test_live_request_uses_series_and_limit_query_parameters(self) -> None:
         with local_server([(200, '{"markets": [], "cursor": ""}')]) as (base_url, request_paths):
             client = KalshiMarketsClient(base_url)
@@ -95,6 +107,18 @@ class KalshiMarketsClientTests(unittest.TestCase):
         self.assertEqual(
             parse_qs(urlparse(request_paths[1]).query),
             {"series_ticker": ["KXNFLGAME"], "limit": ["25"], "cursor": ["next page"]},
+        )
+
+    def test_captured_pages_retain_request_and_next_cursors(self) -> None:
+        first_page = '{"markets": [], "cursor": "next page"}'
+        second_page = '{"markets": [], "cursor": ""}'
+
+        with local_server([(200, first_page), (200, second_page)]) as (base_url, _):
+            pages = KalshiMarketsClient(base_url).fetch_market_pages(series_ticker="KXNFLGAME")
+
+        self.assertEqual(
+            [(page.request_cursor, page.next_cursor) for page in pages],
+            [(None, "next page"), ("next page", "")],
         )
 
     def test_empty_terminal_page_returns_no_records(self) -> None:
