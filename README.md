@@ -39,12 +39,23 @@ may use `KALSHI_API_BASE_URL` to select a non-secret API base URL:
 
 The default test suite never requires live access or credentials.
 
+## Development S3 infrastructure
+
+Milestone 2 includes a Terraform root module for a protected development raw
+bucket and a constrained writer role. It is separate from the offline package
+workflow and does not apply infrastructure automatically. See
+[`infra/terraform/development-s3`](infra/terraform/development-s3) for its
+review-first configuration and operating instructions. Application persistence
+and its authorized read-back demonstration remain the next task.
+
 ## Project layout
 
 - `src/kalshi_ingestion/` — typed response validation, client, and CLI
 - `fixtures/` — sanitized source-shaped responses used by offline tests
 - `tests/` — fixture and local-server tests
+- `infra/terraform/development-s3/` — development raw S3 bucket and writer role
 - `docs/` — architecture, requirements, and accepted decisions
 
-The current scope is extraction only. AWS, S3, Snowflake, dbt, scheduling, and
-additional providers are intentionally deferred to later milestones.
+The current scope is local extraction and development raw-storage provisioning.
+Application-level S3 persistence, Snowflake, dbt, scheduling, and additional
+providers are intentionally deferred to later milestones.
