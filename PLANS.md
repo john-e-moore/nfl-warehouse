@@ -31,79 +31,79 @@ For a small, obvious edit, the acceptance checks in `BOARD.md` are enough.
   `docs/decisions/`.
 - A checked box means evidence exists, not merely that code was written.
 
-## Current execution plan — M2-T1
+## Current execution plan — M2-T2
 
 ### Outcome
 
-A versioned, implementation-ready contract specifies immutable, partitioned raw
-response objects and successful-run manifests for the development S3 boundary.
+Offline code creates exact-byte gzip payloads and contract-compliant manifests
+from captured Kalshi pages, ready for a later S3 writer without requiring AWS.
 
 ### Non-goals
 
-- Constructing payloads, compressing data, computing checksums in code, or
-  changing the fixture CLI
 - Terraform, AWS credentials, S3 writes, read-back behavior, or live tests
+- Changing the fixture CLI's default offline workflow
 - Retry policy, run statuses, error categories, quarantine, and richer failure
   metadata reserved for Milestone 3
 
 ### Steps
 
-- [x] Decompose Milestone 2 on the board, make M2-T1 the sole Today item, and
-  record this task plan.
-- [x] Define the durable raw-output contract: key grammar, byte/checksum
-  boundaries, immutable-write semantics, manifest schema, and Milestone 3
-  deferrals.
-- [x] Run the relevant documentation and repository checks; record evidence and
-  leave a precise task handoff without advancing to M2-T2.
+- [x] Capture each live response as bytes before decoding or validation while
+  preserving the current typed-record client boundary; verify with local-server
+  tests.
+- [x] Construct deterministic gzip payloads, contract keys, checksums, and
+  manifest bytes from supplied run metadata and captured pages; verify with
+  fixture-backed round-trip and manifest tests.
+- [x] Run the full local quality suite and fixture CLI, record completion
+  evidence, and leave a precise handoff without advancing to M2-T3.
 
 ### Git workspace
 
-- Branch: `milestone-2/raw-output-contract`
+- Branch: `milestone-2/raw-artifacts`
 - Worktree: `/home/john/nfl-warehouse`
 
 ### Commit plan
 
-- [x] `docs: plan raw output contract` — ordered M2 board tasks and M2-T1 plan;
-  verify with focused review and `git diff --check`.
-- [x] `docs: define immutable raw output contract` — versioned contract and
-  aligned architecture/specification references; verify with a focused contract
-  review and `git diff --check`.
-- [x] `docs: hand off raw output contract` — completed task evidence in the
-  board and plan; verify with the full local quality suite.
+- [x] `feat: capture raw market response pages` — exact-byte capture at the
+  source-client boundary; verify focused local-server tests and typing.
+- [x] `feat: build deterministic raw run artifacts` — gzip payloads, keys,
+  checksums, and manifests with fixture-backed tests; verify the focused suite.
+- [x] `docs: hand off raw artifact construction` — completed-task evidence in
+  the board and plan; verify the full local quality suite and fixture CLI.
 
 ### Decisions
 
-- Raw objects are keyed by provider/entity/UTC observation hour/run UUID; each
-  source response page is its own gzip object and a manifest is published last.
-- Raw-body and stored-gzip SHA-256 values are both required so read-back can
-  prove preservation and persisted-object integrity independently.
+- Preserve byte capture in a page-level client result so the existing
+  typed-record boundary remains compatible while a later run boundary can use
+  the raw pages directly.
+- Keep artifact construction pure and AWS-free; supply every time, run ID, and
+  non-secret request field explicitly so output bytes and keys are repeatable.
 
 ### Discoveries
 
-- The M2 roadmap tasks existed only at roadmap level; the board needed its
-  required current-milestone decomposition before implementation could begin.
-- The prior architecture used `source=kalshi`; the accepted contract changes
-  that physical segment to the clearer `provider=kalshi` while retaining the
-  same logical partitioning.
+- `gzip.GzipFile` with a zero timestamp and empty filename produces the
+  contract's reproducible compressed representation without JSON normalization.
+- The current client has no run-orchestration object. M2-T2 therefore exposes
+  compatible captured pages and artifact inputs without adding a premature
+  orchestration abstraction.
 
 ### Verification evidence
 
-- `git diff --check` passed for both implementation slices.
-- `.venv/bin/ruff format --check .` and `.venv/bin/ruff check .` passed.
-- `.venv/bin/mypy` passed with no issues.
-- `.venv/bin/python -m unittest discover -s tests -v` passed all 12 offline
-  tests.
-- `.venv/bin/kalshi-markets --fixture fixtures/kalshi_markets.json` returned
-  `parsed 1 typed market records` without network access.
+- Focused source-capture checks: Ruff format/check, mypy, and all 10 local-server
+  client tests passed.
+- Focused artifact checks: Ruff format/check, mypy, and all 4 fixture-backed
+  artifact tests passed.
+- Full checks: `.venv/bin/ruff format --check .`, `.venv/bin/ruff check .`,
+  `.venv/bin/mypy`, and `.venv/bin/python -m unittest discover -s tests -v`
+  passed all 18 offline tests; the fixture CLI returned `parsed 1 typed market
+  records`; `git diff --check` passed.
 
 ### Handoff
 
 - Status: complete
-- Commit subjects: `docs: plan raw output contract`, `docs: define immutable
-  raw output contract`, and `docs: hand off raw output contract`
+- Commit subjects: `feat: capture raw market response pages`, `feat: build
+  deterministic raw run artifacts`, and `docs: hand off raw artifact construction`
 - Working tree: clean after the handoff commit
-- Next action: M2-T2 artifact construction in a new dedicated task branch; do
-  not begin it in this task.
+- Next action: M2-T3 in a new dedicated task branch; do not begin it in this task.
 
 ## Previous execution plan — Task workflow controls
 
