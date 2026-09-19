@@ -31,7 +31,92 @@ For a small, obvious edit, the acceptance checks in `BOARD.md` are enough.
   `docs/decisions/`.
 - A checked box means evidence exists, not merely that code was written.
 
-## Current execution plan — M2-T2
+## Current execution plan — M2-T3
+
+### Outcome
+
+Terraform can create a development-only S3 raw-data bucket and constrained
+writer role that are ready for the M2-T4 persistence/read-back boundary.
+
+### Non-goals
+
+- Any application S3 client, writes, read-back demonstration, AWS apply, or
+  credentials
+- Production infrastructure, scheduling, containers, CI/OIDC, Snowflake, or
+  delete/rollback automation
+- Changing the raw-output contract or the fixture-first local workflow
+
+### Steps
+
+- [x] Define the Terraform provider boundary, protected development bucket, and
+  constrained writer role; validate formatting and configuration locally.
+- [x] Add reviewed example configuration and operating instructions for init,
+  plan, apply, and safe teardown; verify that no credentials, state, or
+  environment-specific values are tracked.
+- [x] Run the full applicable local checks, record the real-plan prerequisite,
+  and leave a precise handoff without applying cloud infrastructure.
+
+### Git workspace
+
+- Branch: `milestone-2/development-s3-infrastructure`
+- Worktree: `/home/john/nfl-warehouse`
+
+### Commit plan
+
+- [x] `feat: define protected development S3 storage` — Terraform S3 and IAM
+  resources; verify `terraform fmt -check` and `terraform validate`.
+- [x] `docs: document development S3 operations` — example inputs and safe
+  initialization, review, application, and teardown instructions; verify
+  documentation/configuration review and secret/state exclusions.
+- [x] `docs: hand off development S3 infrastructure` — board/plan completion
+  evidence and Terraform plan-file exclusions; verify all available local
+  checks. A real, non-applied plan remains an operator prerequisite because it
+  needs the approved remote state backend and local configuration.
+
+### Decisions
+
+- Use an externally supplied S3 Terraform backend so state is encrypted,
+  access-restricted, environment-separated, and never co-located with raw data.
+- Use an S3 Object Lock-enabled, versioned bucket with default governance
+  retention. The writer cannot delete, bypass retention, or alter bucket
+  protections; `force_destroy = false` makes routine teardown fail safely.
+- Enforce SSE-S3 and `If-None-Match: *` through the bucket policy for the exact
+  Kalshi markets prefix. The M2-T4 writer must issue direct conditional puts;
+  multipart and copy operations are intentionally not authorized.
+- Trust only explicitly configured development IAM principals to assume the
+  writer role. The role has only prefix-scoped list, get, and put permissions.
+
+### Discoveries
+
+- Terraform was not installed at task start. An ephemeral Terraform 1.8.5 CLI
+  validated the configuration and generated the committed provider lock file.
+- An AWS identity is configured locally, but an unconfigured S3 backend cannot
+  make a plan after `init -backend=false`. The actual plan must use an approved
+  remote state bucket and ignored `development.tfvars`; neither was inferred.
+
+### Verification evidence
+
+- Terraform 1.8.5: `terraform fmt -check -diff` and `terraform validate`
+  passed after `init -backend=false`; the AWS provider lock file pins 5.100.0.
+- An `aws sts get-caller-identity` read-only check confirmed an identity is
+  locally available. A no-refresh plan was intentionally not possible without
+  initializing the required S3 state backend; no resources were applied.
+- Full local checks passed: `.venv/bin/ruff format --check .`,
+  `.venv/bin/ruff check .`, `.venv/bin/mypy`, and
+  `.venv/bin/python -m unittest discover -s tests -v` (18 tests). The fixture
+  CLI returned `parsed 1 typed market records`, and `git diff --check` passed.
+
+### Handoff
+
+- Status: complete
+- Commit subjects: `feat: define protected development S3 storage`,
+  `docs: document development S3 operations`, and the final handoff commit.
+- Working tree: clean after the handoff commit.
+- Next action: M2-T4. Initialize the reviewed remote backend and create/apply a
+  real development plan before an authorized S3 write/read-back demonstration;
+  retain the fixture-first default workflow.
+
+## Previous execution plan — M2-T2
 
 ### Outcome
 

@@ -1,0 +1,10 @@
+# Copy this file to development.tfvars and replace every placeholder locally.
+# development.tfvars is ignored; never commit account IDs, credentials, or state.
+aws_region  = "us-east-1"
+bucket_name = "replace-with-a-globally-unique-development-bucket-name"
+
+# Use the specific developer or deployment role that will assume raw_writer_role_arn.
+# Do not use a production principal or broaden this to an entire AWS account.
+trusted_principal_arns = [
+  "arn:aws:iam::123456789012:role/replace-with-development-deployer",
+]
